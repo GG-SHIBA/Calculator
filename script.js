@@ -87,13 +87,13 @@ function calculatePosition() {
         <div class="value rr">${rr.toFixed(2)}</div>
         <div class="label"><hr/></div>
         <div class="value position"><hr/></div>
-        <div class="label fee">Market Win Fee ($)</div>
+        <div class="label fee">Market TP Case ($)</div>
         <div class="value fee">$ ${marketWinFee.toFixed(2)} → PnL = $ ${marketWinPnL.toFixed(2)}</div>
-        <div class="label fee">Market Win Fee ($)</div>
+        <div class="label fee">Market SL Case ($)</div>
         <div class="value fee">$ ${marketLoseFee.toFixed(2)} → PnL = $ ${marketLosePnL.toFixed(2)}</div>
-        <div class="label fee">Limit Win Fee ($)</div>
+        <div class="label fee">Limit TP Case ($)</div>
         <div class="value fee">$ ${limitWinFee.toFixed(2)} → PnL = $ ${limitWinPnL.toFixed(2)}</div>
-        <div class="label fee">Limit Lose Fee ($)</div>
+        <div class="label fee">Limit SL Case ($)</div>
         <div class="value fee">$ ${limitLoseFee.toFixed(2)} → PnL = $ ${limitLosePnL.toFixed(2)}</div>
     `;
 }
