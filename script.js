@@ -87,13 +87,13 @@ function calculatePosition() {
         <div class="value rr">${rr.toFixed(2)}</div>
         <div class="label"><hr/></div>
         <div class="value position"><hr/></div>
-        <div class="label fee">Market TP Case ($)</div>
+        <div class="label fee">Market Win Fee ($)</div>
         <div class="value fee">$ ${marketWinFee.toFixed(2)} → PnL = $ ${marketWinPnL.toFixed(2)}</div>
-        <div class="label fee">Market SL Case ($)</div>
+        <div class="label fee">Market Win Fee ($)</div>
         <div class="value fee">$ ${marketLoseFee.toFixed(2)} → PnL = $ ${marketLosePnL.toFixed(2)}</div>
-        <div class="label fee">Limit TP Case ($)</div>
+        <div class="label fee">Limit Win Fee ($)</div>
         <div class="value fee">$ ${limitWinFee.toFixed(2)} → PnL = $ ${limitWinPnL.toFixed(2)}</div>
-        <div class="label fee">Limit SL Case ($)</div>
+        <div class="label fee">Limit Lose Fee ($)</div>
         <div class="value fee">$ ${limitLoseFee.toFixed(2)} → PnL = $ ${limitLosePnL.toFixed(2)}</div>
     `;
 }
@@ -127,14 +127,21 @@ function calculatePosition2() {
     document.getElementById("calculatorError2").style.display = "block";
     document.getElementById("error2").innerText = "Price input cannot be blank ! !";
     return;
-  } else if (newEntry === newSL) {
+  } else if (newEntry === newSL || newEntry === newTP || newSL === newTP) {
     document.getElementById("calculatorResult2").style.display = "none";
     document.getElementById("calculatorError2").style.display = "block";
     document.getElementById("error2").innerText = "New SL cannot equal New Entry !";
     return;
   } else {
-    document.getElementById("calculatorResult2").style.display = "block";
-    document.getElementById("calculatorError2").style.display = "none";
+      if ((currentEntry > newSL && newSL > newEntry && newEntry > newTP) || (currentEntry < newSL && newSL < newEntry && newEntry < newTP)) {
+        document.getElementById("calculatorResult2").style.display = "block";
+        document.getElementById("calculatorError2").style.display = "none";
+      } else {
+        document.getElementById("calculatorResult2").style.display = "none";
+        document.getElementById("calculatorError2").style.display = "block";
+        document.getElementById('error2').innerHTML = 'New Price positioning is not in correct order compare to current Entry Price!';
+        return;
+      }
   }
 
   // Calculate new additon size
