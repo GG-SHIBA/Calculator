@@ -1,15 +1,28 @@
 /* Toggle between calculator and simulator */
 document.getElementById('showCalculator').addEventListener('click', () => {
     document.getElementById('calculatorSection').classList.add('active');
+    document.getElementById('calculatorSection2').classList.remove('active');
     document.getElementById('simulatorSection').classList.remove('active');
     document.getElementById('showCalculator').classList.add('active');
     document.getElementById('showSimulator').classList.remove('active');
+    document.getElementById('showCalculator2').classList.remove('active');
 });
 document.getElementById('showSimulator').addEventListener('click', () => {
     document.getElementById('simulatorSection').classList.add('active');
     document.getElementById('calculatorSection').classList.remove('active');
+    document.getElementById('calculatorSection2').classList.remove('active');
     document.getElementById('showSimulator').classList.add('active');
     document.getElementById('showCalculator').classList.remove('active');
+    document.getElementById('showCalculator2').classList.remove('active');
+});
+
+document.getElementById('showCalculator2').addEventListener('click', () => {
+  document.getElementById('calculatorSection2').classList.add('active');
+  document.getElementById('calculatorSection').classList.remove('active');
+  document.getElementById('simulatorSection').classList.remove('active');
+  document.getElementById('showCalculator2').classList.add('active');
+  document.getElementById('showCalculator').classList.remove('active');
+  document.getElementById('showSimulator').classList.remove('active');
 });
 
 /* ==== Your existing Calculator Logic ==== */
@@ -28,16 +41,21 @@ function calculatePosition() {
     const tp = parseFloat(document.getElementById('tp').value);
     const risk = parseFloat(document.getElementById('risk').value);
 
-    if(isNaN(entry) || isNaN(sl) || isNaN(tp) || isNaN(risk) || entry === sl || entry === tp || sl === tp) {
+    if(isNaN(entry) || isNaN(sl) || isNaN(tp) || isNaN(risk)) {
         document.getElementById("calculatorResult").style.display = "none";
         document.getElementById("calculatorError").style.display = "block";
-        document.getElementById('error').innerHTML = '<div>Please enter valid PRICE !</div>';
+        document.getElementById('error').innerHTML = 'Price input cannot be blank !';
         return;
+    }
+    else if (entry === sl || entry === tp || sl === tp){
+      document.getElementById("calculatorResult").style.display = "none";
+      document.getElementById("calculatorError").style.display = "block";
+      document.getElementById('error').innerHTML = 'Entry, SL, TP Price has to be different !';
     }
     else if ((entry > sl && entry > tp) || (entry < sl && entry < tp)) {
         document.getElementById("calculatorResult").style.display = "none";
         document.getElementById("calculatorError").style.display = "block";
-        document.getElementById('error').innerHTML = '<div>Take Profit and Stop Loss must be on opposite sides of Entry Price !</div>';
+        document.getElementById('error').innerHTML = 'Take Profit and Stop Loss must be on opposite sides of Entry Price !';
         return;
     }
     else{
@@ -92,6 +110,106 @@ inputs.forEach((id, index) => {
             }
         }
     });
+});
+
+// Add Size Calcualtion Section:
+function calculatePosition2() {
+  const currentEntry = parseFloat(document.getElementById('currentEntry').value);
+  const currentSize = parseFloat(document.getElementById('currentSize').value);
+
+  const newEntry = parseFloat(document.getElementById('newEntry').value);
+  const newSL = parseFloat(document.getElementById('newSL').value);
+  const newTP = parseFloat(document.getElementById('newTP').value);
+  const lockProfit = parseFloat(document.getElementById('lockProfit').value); 
+
+  if (isNaN(currentEntry) || isNaN(currentSize) || isNaN(newEntry) || isNaN(newSL) || isNaN(newTP) || isNaN(lockProfit)) {
+    document.getElementById("calculatorResult2").style.display = "none";
+    document.getElementById("calculatorError2").style.display = "block";
+    document.getElementById("error2").innerText = "Price input cannot be blank ! !";
+    return;
+  } else if (newEntry === newSL) {
+    document.getElementById("calculatorResult2").style.display = "none";
+    document.getElementById("calculatorError2").style.display = "block";
+    document.getElementById("error2").innerText = "New SL cannot equal New Entry !";
+    return;
+  } else {
+    document.getElementById("calculatorResult2").style.display = "block";
+    document.getElementById("calculatorError2").style.display = "none";
+  }
+
+  // Calculate new additon size
+  var newSize = 0;
+  if (newEntry > currentEntry) { //long scenario
+    newSize = ((newSL - currentEntry) * currentSize - lockProfit) / (newEntry - newSL);
+  } else { //short scenario
+    newSize = ((currentEntry - newSL) * currentSize - lockProfit) / (newSL - newEntry);
+  }
+
+  //newSize is negative means that you cannot add for your desire price at this point !
+  if(newSize <= 0){
+    document.getElementById("calculatorResult2").style.display = "none";
+    document.getElementById("calculatorError2").style.display = "block";
+    document.getElementById("error2").innerText = "Desired SL and locked profit are not achievable at this point !";
+    return;
+  }
+
+  // total size
+  const totalSize = currentSize + newSize ;
+
+  // New average entry
+  const overallEntry = (currentEntry * currentSize + newEntry * newSize) / (totalSize);
+
+  // New Profit if new TP hit
+  const newProfit = Math.abs(newTP - overallEntry) * totalSize;
+
+  const limitFeePercent = 0.02 / 100; // 0.02% fee
+  const marketFeePercent = 0.045 / 100; // 0.045% fee
+  const marketTPFee = (overallEntry + newTP) * totalSize * marketFeePercent;
+  const marketBEFee = (overallEntry + newSL) * totalSize * marketFeePercent;
+  const limitTPFee = (overallEntry + newTP) * totalSize * limitFeePercent;
+  const limitBEFee = (overallEntry + newSL) * totalSize * limitFeePercent;
+
+  const marketTPPnL = newProfit - marketTPFee;
+  const marketBEPnL = lockProfit - marketBEFee;
+
+  const limitTPPnL = newProfit - limitTPFee;
+  const limitBEPnL = lockProfit - limitBEFee;
+
+  document.getElementById('result2').innerHTML = `
+        <div class="label">Size to Add</div>
+        <div class="value position">${newSize.toFixed(6)} </div>
+        <div class="label">New Total Size</div>
+        <div class="value pnl">${totalSize.toFixed(6)}</div>
+        <div class="label">Overall Entry Price ($)</div>
+        <div class="value pnl">$ ${overallEntry.toFixed(2)}</div>
+        <div class="label">Target Profit ($)</div>
+        <div class="value pnl">$ ${newProfit.toFixed(6)} </div>
+        <div class="label"><hr/></div>
+        <div class="value position"><hr/></div>
+        <div class="label fee">Market TP Case ($)</div>
+        <div class="value fee">Fee = $ ${marketTPFee.toFixed(2)} → PnL = $ ${marketTPPnL.toFixed(2)}</div>
+        <div class="label fee">Market BE Case ($)</div>
+        <div class="value fee">Fee = $ ${marketBEFee.toFixed(2)} → PnL = $ ${marketBEPnL.toFixed(2)}</div>
+        <div class="label fee">Limit TP Case ($)</div>
+        <div class="value fee">Fee = $ ${limitTPFee.toFixed(2)} → PnL = $ ${limitTPPnL.toFixed(2)}</div>
+        <div class="label fee">Limit BE Case ($)</div>
+        <div class="value fee">Fee = $ ${limitBEFee.toFixed(2)} → PnL = $ ${limitBEPnL.toFixed(2)}</div>
+    `;
+}
+
+document.getElementById('calculateBtn2').addEventListener('click', calculatePosition2);
+const inputs2 = ['currentEntry', 'currentSize', 'newEntry', 'newSL', 'newTP', 'lockProfit'];
+inputs2.forEach((id, index) => {
+  document.getElementById(id).addEventListener('keydown', function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (index < inputs2.length - 1) {
+        document.getElementById(inputs2[index + 1]).focus();
+      } else {
+        calculatePosition2();
+      }
+    }
+  });
 });
 
 /* ==== Your existing Simulator Logic ==== */

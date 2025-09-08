@@ -12,6 +12,7 @@
     <!-- Toggle buttons -->
     <div class="toggle-bar">
         <button id="showCalculator" class="active">Calculator</button>
+        <button id="showCalculator2">Add Size Calculator</button>
         <button id="showSimulator">Simulator</button>
     </div>
 
@@ -42,10 +43,56 @@
             <button id="calculateBtn">Calculate</button>
         </div>
         <div class="calculator" id="calculatorError"  style="display: none; margin-top: 20px">
-            <div id="error" style="color: #c21919;"></div>
+            <div id="error" style="color: #c21919; font-weight: bold;"></div>
         </div>
         <div class="calculator" id="calculatorResult"  style="display: none; margin-top: 20px">
             <div class="result" id="result"></div>
+        </div>
+    </div>
+
+    <!-- Add size Calculator  -->
+    <div class="section" id="calculatorSection2">
+        <div class="calculator">
+            <h2>Position Size Calculator</h2><br/><br/>
+            
+            <div class="form-row">
+                <label for="entry" class="title1">Current Entry ($)</label>
+                <input type="number" id="currentEntry" placeholder="0">
+            </div>
+
+            <div class="form-row">
+                <label for="entry" class="title1">Current Size</label>
+                <input type="number" id="currentSize" placeholder="0">
+            </div>
+
+            <br/><hr/><br/>
+
+            <div class="form-row">
+                <label for="risk" class="title4">Next Entry ($)</label>
+                <input type="number" id="newEntry" placeholder="0">
+            </div>
+
+            <div class="form-row">
+                <label for="risk" class="title4">Next SL ($)</label>
+                <input type="number" id="newSL" placeholder="0">
+            </div>
+
+            <div class="form-row">
+                <label for="tp" class="title4">Next TP ($)</label>
+                <input type="number" id="newTP" placeholder="0">
+            </div>
+
+            <div class="form-row">
+                <label for="risk" class="title4">Lock Profit ($)</label>
+                <input type="number" id="lockProfit" placeholder="0">
+            </div>
+            <button id="calculateBtn2">Calculate</button>
+        </div>
+        <div class="calculator" id="calculatorError2"  style="display: none; margin-top: 20px">
+            <div id="error2" style="color: #c21919; font-weight: bold;"></div>
+        </div>
+        <div class="calculator" id="calculatorResult2"  style="display: none; margin-top: 20px">
+            <div class="result" id="result2">test</div>
         </div>
     </div>
 
@@ -71,7 +118,7 @@
             </div>
              <button onclick="runSimulation()">Run Simulation</button>
         </div>
-        <div class="container" id="simulatorResult" style="display: none; margin-top: 20px";>
+        <div class="container" id="simulatorResult" style="display: none; margin-top: 20px;">
             <div id="results"></div>
             <div class = "calculator2">
                 <canvas id="equityChart"></canvas>
