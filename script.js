@@ -133,15 +133,8 @@ function calculatePosition2() {
     document.getElementById("error2").innerText = "New SL cannot equal New Entry !";
     return;
   } else {
-      if ((currentEntry > newSL && newSL > newEntry && newEntry > newTP) || (currentEntry < newSL && newSL < newEntry && newEntry < newTP)) {
-        document.getElementById("calculatorResult2").style.display = "block";
-        document.getElementById("calculatorError2").style.display = "none";
-      } else {
-        document.getElementById("calculatorResult2").style.display = "none";
-        document.getElementById("calculatorError2").style.display = "block";
-        document.getElementById('error2').innerHTML = 'New Price positioning is not in correct order compare to current Entry Price!';
-        return;
-      }
+    document.getElementById("calculatorResult2").style.display = "block";
+    document.getElementById("calculatorError2").style.display = "none";
   }
 
   // Calculate new additon size
