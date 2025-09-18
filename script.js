@@ -113,6 +113,33 @@ inputs.forEach((id, index) => {
 });
 
 // Add Size Calcualtion Section:
+const inputCurrent = [
+  document.getElementById("currentEntry"),
+  document.getElementById("currentSize"),
+  document.getElementById("newEntry")
+];
+
+const currentProfit = document.getElementById("currentProfit");
+
+function calculateProfit() {
+  const currentEntry = Number(inputCurrent[0].value) || 0;
+  const currentSize  = Number(inputCurrent[1].value) || 0;
+  const newEntry     = Number(inputCurrent[2].value) || 0;
+
+  const profit = (newEntry - currentEntry) * currentSize;
+
+  // ✅ put result into the input box
+  currentProfit.value = profit.toFixed(2);
+}
+
+inputCurrent.forEach(input => {
+  input.addEventListener("input", () => {
+    if (inputCurrent.every(i => i.value.trim() !== "")) {
+      calculateProfit();
+    }
+  });
+});
+
 function calculatePosition2() {
   const currentEntry = parseFloat(document.getElementById('currentEntry').value);
   const currentSize = parseFloat(document.getElementById('currentSize').value);
