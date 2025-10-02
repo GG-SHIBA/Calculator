@@ -67,16 +67,7 @@ function calculatePosition() {
     const potentialProfit = positionSize * Math.abs(tp - entry);
     const rr = Math.abs(tp - entry) / Math.abs(entry - sl);
     const pnl = potentialProfit;
-    const limitFeePercent = 0.02 / 100; // 0.02% fee
-    const marketFeePercent = 0.045 / 100; // 0.045% fee
-    const marketWinFee = (entry + tp) * positionSize * marketFeePercent;
-    const marketLoseFee = (entry + sl) * positionSize * marketFeePercent;
-    const limitWinFee = (entry + tp) * positionSize * limitFeePercent;
-    const limitLoseFee = (entry + sl) * positionSize * limitFeePercent;
-    const marketLosePnL = -Math.abs(risk) - marketLoseFee;
-    const limitLosePnL = -Math.abs(risk) - limitLoseFee;
-    const marketWinPnL = pnl - marketWinFee;
-    const limitWinPnL = pnl - limitWinFee;
+;
 
     document.getElementById('result').innerHTML = `
         <div class="label">Position Size (units)</div>
@@ -85,16 +76,6 @@ function calculatePosition() {
         <div class="value pnl">$ ${pnl.toFixed(2)}</div>
         <div class="label">Risk-Reward (RR)</div>
         <div class="value rr">${rr.toFixed(2)}</div>
-        <div class="label"><hr/></div>
-        <div class="value position"><hr/></div>
-        <div class="label fee">Market Win Fee ($)</div>
-        <div class="value fee">$ ${marketWinFee.toFixed(2)} → PnL = $ ${marketWinPnL.toFixed(2)}</div>
-        <div class="label fee">Market Win Fee ($)</div>
-        <div class="value fee">$ ${marketLoseFee.toFixed(2)} → PnL = $ ${marketLosePnL.toFixed(2)}</div>
-        <div class="label fee">Limit Win Fee ($)</div>
-        <div class="value fee">$ ${limitWinFee.toFixed(2)} → PnL = $ ${limitWinPnL.toFixed(2)}</div>
-        <div class="label fee">Limit Lose Fee ($)</div>
-        <div class="value fee">$ ${limitLoseFee.toFixed(2)} → PnL = $ ${limitLosePnL.toFixed(2)}</div>
     `;
 }
 document.getElementById('calculateBtn').addEventListener('click', calculatePosition);
@@ -116,20 +97,26 @@ inputs.forEach((id, index) => {
 const inputCurrent = [
   document.getElementById("currentEntry"),
   document.getElementById("currentSize"),
-  document.getElementById("newEntry")
+  document.getElementById("newEntry"),
+  document.getElementById('lockProfitDropdown')
 ];
 
 const currentProfit = document.getElementById("currentProfit");
+const lockProfit = document.getElementById("lockProfit");
 
 function calculateProfit() {
   const currentEntry = Number(inputCurrent[0].value) || 0;
   const currentSize  = Number(inputCurrent[1].value) || 0;
   const newEntry     = Number(inputCurrent[2].value) || 0;
+  const lockprofitShow = Number(inputCurrent[3].value) || 0;
 
-  const profit = (newEntry - currentEntry) * currentSize;
+  const profit = Math.abs((newEntry - currentEntry) * currentSize);
+  const lockProfitVal = profit * lockprofitShow /100;
 
   // ✅ put result into the input box
   currentProfit.value = profit.toFixed(2);
+  lockProfit.value = lockProfitVal.toFixed(2);
+  
 }
 
 inputCurrent.forEach(input => {
@@ -147,9 +134,9 @@ function calculatePosition2() {
   const newEntry = parseFloat(document.getElementById('newEntry').value);
   const newSL = parseFloat(document.getElementById('newSL').value);
   const newTP = parseFloat(document.getElementById('newTP').value);
-  const lockProfit = parseFloat(document.getElementById('lockProfit').value); 
+  const lockProfit = parseFloat(document.getElementById('lockProfitDropdown').value) * (currentProfit.value / 100);
 
-  if (isNaN(currentEntry) || isNaN(currentSize) || isNaN(newEntry) || isNaN(newSL) || isNaN(newTP) || isNaN(lockProfit)) {
+  if (isNaN(currentEntry) || isNaN(currentSize) || isNaN(newEntry) || isNaN(newSL) || isNaN(newTP)) {
     document.getElementById("calculatorResult2").style.display = "none";
     document.getElementById("calculatorError2").style.display = "block";
     document.getElementById("error2").innerText = "Price input cannot be blank ! !";
@@ -189,18 +176,6 @@ function calculatePosition2() {
   // New Profit if new TP hit
   const newProfit = Math.abs(newTP - overallEntry) * totalSize;
 
-  const limitFeePercent = 0.02 / 100; // 0.02% fee
-  const marketFeePercent = 0.045 / 100; // 0.045% fee
-  const marketTPFee = (overallEntry + newTP) * totalSize * marketFeePercent;
-  const marketBEFee = (overallEntry + newSL) * totalSize * marketFeePercent;
-  const limitTPFee = (overallEntry + newTP) * totalSize * limitFeePercent;
-  const limitBEFee = (overallEntry + newSL) * totalSize * limitFeePercent;
-
-  const marketTPPnL = newProfit - marketTPFee;
-  const marketBEPnL = lockProfit - marketBEFee;
-
-  const limitTPPnL = newProfit - limitTPFee;
-  const limitBEPnL = lockProfit - limitBEFee;
 
   document.getElementById('result2').innerHTML = `
         <div class="label">Size to Add</div>
@@ -211,21 +186,11 @@ function calculatePosition2() {
         <div class="value pnl">$ ${overallEntry.toFixed(2)}</div>
         <div class="label">Target Profit ($)</div>
         <div class="value pnl">$ ${newProfit.toFixed(6)} </div>
-        <div class="label"><hr/></div>
-        <div class="value position"><hr/></div>
-        <div class="label fee">Market TP Case ($)</div>
-        <div class="value fee">Fee = $ ${marketTPFee.toFixed(2)} → PnL = $ ${marketTPPnL.toFixed(2)}</div>
-        <div class="label fee">Market BE Case ($)</div>
-        <div class="value fee">Fee = $ ${marketBEFee.toFixed(2)} → PnL = $ ${marketBEPnL.toFixed(2)}</div>
-        <div class="label fee">Limit TP Case ($)</div>
-        <div class="value fee">Fee = $ ${limitTPFee.toFixed(2)} → PnL = $ ${limitTPPnL.toFixed(2)}</div>
-        <div class="label fee">Limit BE Case ($)</div>
-        <div class="value fee">Fee = $ ${limitBEFee.toFixed(2)} → PnL = $ ${limitBEPnL.toFixed(2)}</div>
     `;
 }
 
 document.getElementById('calculateBtn2').addEventListener('click', calculatePosition2);
-const inputs2 = ['currentEntry', 'currentSize', 'newEntry', 'newSL', 'newTP', 'lockProfit'];
+const inputs2 = ['currentEntry', 'currentSize', 'newEntry', 'newSL', 'newTP'];
 inputs2.forEach((id, index) => {
   document.getElementById(id).addEventListener('keydown', function (e) {
     if (e.key === "Enter") {

@@ -79,6 +79,7 @@ label.title1 { color: #0655a4; }   /* Blue */
 label.title2 { color: #c21919; }      /* Red */
 label.title3 { color: #0d7826; }      /* Green */
 label.title4 { color: #993366; }    /* pruple */
+label.title5 { color: #186269; }      /* Dark Orange */
 .form-row input {
     flex: 1.5;
     padding: 8px 10px;
@@ -86,6 +87,15 @@ label.title4 { color: #993366; }    /* pruple */
     border-radius: 6px;
     font-size: 14px;
 }
+
+.form-row select {
+    flex: 1.5;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
 .calculator button {
     width: 100%;
     padding: 12px;
